@@ -1,0 +1,47 @@
+{
+	"name": "simple-auth",
+	"version": "1.0.0",
+	"description": "Simple lambda function for validate JWT Token (Use with AWS API Gateway).",
+	"main": "handler.js",
+	"scripts": {
+		"clean": "rimraf .build .serverless .lib",
+		"copy-env": "copyfiles -f .serverless/.env ./",
+		"copy-serverless-environment": "serverless dotenv --stage dev --accountId 999999999999 && copyfiles -f .serverless/.env ./",
+		"test": "npm run copy-serverless-environment && mocha --require ts-node/register test/**/*.ts --timeout 60000",
+		"test-publish": "mocha --require ts-node/register test/**/*.ts --timeout 60000",
+		"start": "npm run copy-serverless-environment && serverless offline start --port 4000 --noTimeout --stage dev",
+		"pretest": "npm run clean",
+		"tsc": "tsc"
+	},
+	"dependencies": {
+		"aws-sdk": "^2.471.0",
+		"dotenv": "^8.0.0",
+		"jsonwebtoken": "^8.5.1",
+		"request": "^2.88.0",
+		"request-promise": "^4.2.4",
+		"sha1": "^1.1.1",
+		"source-map-support": "^0.5.10",
+		"ts-mockito": "^2.3.1"
+	},
+	"devDependencies": {
+		"@jimdo/serverless-dotenv": "^1.0.0",
+		"@types/aws-lambda": "^8.10.17",
+		"@types/chai": "^4.1.7",
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^10.12.18",
+		"chai": "^4.2.0",
+		"copy-webpack-plugin": "^5.0.3",
+		"copyfiles": "^2.1.0",
+		"mocha": "^6.1.4",
+		"serverless-offline": "^3.25.6",
+		"serverless-plugin-ifelse": "^1.0.4",
+		"serverless-pseudo-parameters": "^2.4.0",
+		"serverless-webpack": "^5.2.0",
+		"ts-loader": "^5.3.3",
+		"ts-node": "^8.3.0",
+		"typescript": "^3.5.2",
+		"webpack": "^4.29.0"
+	},
+	"author": "Outinvest",
+	"license": "MIT"
+}

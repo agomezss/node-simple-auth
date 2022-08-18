@@ -1,0 +1,54 @@
+service:
+  name: simple-auth
+
+custom:
+    stage: ${opt:stage, self:provider.stage}
+    region: ${opt:region, self:provider.region}
+    defaultDeploymentRegion: us-east-1
+    accountIdAWS: "#{AWS::AccountId}"
+    accountId: ${opt:accountId, self:custom.accountIdAWS}
+    iamRoleName: ${self:service.name}-${self:provider.stage}-${self:provider.region}-lambdaRole
+    arnSnsPrefix: arn:aws:sns:${self:provider.region}:${self:custom.accountId}
+    arnSqsPrefix: arn:aws:sqs:${self:provider.region}:${self:custom.accountId}
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, self:custom.defaultDeploymentRegion}
+  memorySize: 512
+  timeout: 10
+  apiKeys:
+    - ${self:service.name}_api_key_${opt:stage}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "apigateway:*"
+      Resource:
+        - "arn:aws:apigateway:${self:provider.region}::/*"
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource:
+        - "*"
+    - Effect: "Allow"
+      Action:
+        - "cloudwatch:*"
+      Resource:
+        - "*"
+  environment:
+    AUTH_CLIENT_PUBLIC_KEY: ${ssm:/auth/clientpublickey~true}
+    AUTH_AUDIENCE: ${ssm:/auth/audience~true}
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - '@jimdo/serverless-dotenv'
+  - serverless-pseudo-parameters
+  - serverless-plugin-ifelse
+
+functions:
+  auth:
+    handler: handler.authToken
+    iamRoleStatementsName: ${self:custom.iamRoleName}
+    cors: true

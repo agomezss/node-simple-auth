@@ -1,0 +1,15 @@
+# package directories
+lib
+node_modules
+jspm_packages
+package-lock.json
+
+# Serverless directories
+.serverless
+
+# Webpack directories
+.webpack
+
+# .env -> this is generate automatically from serverless 
+# and required only for running tests and localhost testing
+.env
